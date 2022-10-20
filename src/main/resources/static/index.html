@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Hello WebSocket</title>
+    <link href="./css/chatt.css" rel="stylesheet" type="text/css"> 
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/sockjs.min.js"></script>
+    <script src="./js/stomp.min.js"></script>
+
+    <script src="./js/app.js"></script>
+</head>
+<body>
+    <div id="chatt">
+		<h1>WebSocket 9901</h1>
+		<input type="text" id="mid" value="홍길동">
+        <button id="connect" class="btn btn-default" type="submit">Connect</button>
+        <button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Disconnect</button>
+		<br/>
+		<div id="talk"></div>
+		<div id="sendZone">
+            <textarea id="msg" value="hi..." ></textarea>
+            <input type="button" value="채팅" id="sendChat">
+            <input type="button" value="공지" id="sendNotice">
+		</div>
+	</div>
+</body>
+</html>

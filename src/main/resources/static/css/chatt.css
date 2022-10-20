@@ -1,0 +1,72 @@
+@charset "UTF-8";
+
+*{
+	box-sizing: border-box;
+}
+
+#chatt{
+	width: 95%;
+	margin: 20px auto;
+}
+
+#chatt #talk{
+	width: 95%;
+	height: 400px;
+	overflow: scroll;
+	border : 1px solid #aaa;
+}
+#chatt #msg{
+	width: 75%;
+	height: 100px;
+	display: inline-block;
+}
+
+#chatt #sendZone > *{
+	vertical-align: top;
+}
+
+#chatt #sendChat{
+	width: 10%;
+	height: 100px;
+}
+
+#chatt #sendNotice{
+	width: 10%;
+	height: 100px;
+}
+
+#chatt #talk #messageDiv{
+	width: 70%;
+	display: inline-block;
+	padding: 6px;
+	border-radius:10px;
+	
+}
+
+#chatt .me{
+	background-color : rgb(255, 255, 204);
+	margin : 1px 0px 2px 30%;	
+}
+
+#chatt .other{
+	background-color : rgb(238, 238, 238);
+	margin : 2px;
+}
+
+#chatt #talk div #noticeDiv{
+	width: 100%;
+	display: inline-block;
+	padding: 6px;
+	border-radius:10px;
+	
+}
+
+#chatt .notice{
+	background-color : rgb(255, 152, 152);
+	margin : 2px;
+}
+
+#chatt .system{
+	background-color : rgb(152, 255, 171);
+	margin : 2px;
+}
