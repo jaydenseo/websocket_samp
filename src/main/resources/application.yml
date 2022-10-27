@@ -5,3 +5,19 @@ spring:
     redis:
         host: localhost
         port: 6379
+
+management:
+    endpoints:
+        web:
+            exposure:
+                include: "*"
+            base-path: "/ccfe"
+    endpoint:
+        shutdown:
+            enabled: true
+        health:
+            show-details: always
+
+config:
+    redis:
+        topic: chat9901|chatNotice

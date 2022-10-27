@@ -10,6 +10,7 @@ import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -46,6 +47,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 String sessionId = accessor.getSessionId();
 
                 if(StompCommand.CONNECT.equals(accessor.getCommand())){
+                    // StompHeaders headers = StompHeaders.readOnlyStompHeaders(accessor.toNativeHeaderMap());
                     String userId = Objects.toString(accessor.getFirstNativeHeader("userId"), "");
                     String hostIp = Objects.toString(accessor.getFirstNativeHeader("hostIp"), "");
                     String connectTime = Objects.toString(accessor.getFirstNativeHeader("connectTime"), "");

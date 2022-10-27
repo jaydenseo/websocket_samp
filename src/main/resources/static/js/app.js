@@ -92,7 +92,7 @@ function showChat(chat) {
                     <span>${chat.message}</span>
                 </div>`;
     $("#talk").append(item);
-    $("#talk").scrollTop=$("#talk").scrollHeight;//스크롤바 하단으로 이동
+    $("#talk").scrollTop($("#talk")[0].scrollHeight);//스크롤바 하단으로 이동
 }
 
 // [공지] 수신
@@ -104,7 +104,7 @@ function showNotice(chat) {
                     <span>${chat.message}</span>
                 </div>`;
     $("#talk").append(item);
-    $("#talk").scrollTop=$("#talk").scrollHeight;//스크롤바 하단으로 이동
+    $("#talk").scrollTop($("#talk")[0].scrollHeight);//스크롤바 하단으로 이동
 }
 
 // [시스템메시지] 수신
@@ -116,7 +116,7 @@ function showSystem(chat) {
                     <span>${chat.message}</span>
                 </div>`;
     $("#talk").append(item);
-    $("#talk").scrollTop=$("#talk").scrollHeight;
+    $("#talk").scrollTop($("#talk")[0].scrollHeight);//스크롤바 하단으로 이동
 
 }
 
