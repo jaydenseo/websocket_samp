@@ -32,10 +32,16 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
+
+        // 웹소켓 연결을 하는 경우, endpoint가 되는 url (ws://localhost:9091/websocket)
+        // stomp 5버전 이상부터는 
         registry.addEndpoint("/websocket")
-                // .setAllowedOrigins("*")
-                // .setAllowedOriginsPatterns("*")
-                .withSockJS();            // 최초 소켓 연결을 하는 경우, endpoint가 되는 url
+                .setAllowedOriginPatterns("*");
+
+        // SockJs로 웹소켓 연결을 하는 경우, endpoint가 되는 url (http://localhost:9091/websocket)
+        registry.addEndpoint("/websocket")
+                .setAllowedOriginPatterns("*")
+                .withSockJS();            
     }
 
     @Override

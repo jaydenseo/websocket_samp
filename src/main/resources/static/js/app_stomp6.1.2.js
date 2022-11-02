@@ -1,5 +1,6 @@
 var stompClient = null;
 var data = {};//전송 데이터(JSON)
+var sock = null;
 
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
@@ -13,57 +14,55 @@ function setConnected(connected) {
 
 }
 
+// stomp 5버전 이상
 function connect() {
-    var sock = new SockJS('/websocket');
-    stompClient = Stomp.over(sock);
-    stompClient.connect({userId: $('#mid').val(), hostIp: window.location.host}, function (frame) {
-        setConnected(true);
-        console.log('Connected: ' + frame);
-        // 채팅
-        stompClient.subscribe('/topic/chat', function (chat) {
-            showChat(JSON.parse(chat.body));
-        });
-        // 공지
-        stompClient.subscribe('/topic/notice', function (chat) {
-            showNotice(JSON.parse(chat.body));
-        });
-        // 입장/퇴장 (시스템)
-        stompClient.subscribe('/topic/system', function (chat) {
-            showSystem(JSON.parse(chat.body));
-        });
+
+    stompClient = new StompJs.Client({
+        brokerURL: 'ws://localhost:9901/websocket',
+        connectHeaders: {
+            userId: $('#mid').val(), 
+            hostIp: window.location.host
+        },
+        debug: function (str) {
+            console.log(str);       // headers of the incoming and outgoing frames are logged
+        },
+        reconnectDelay: 5000,       // automatic reconnect (default: 5,000ms)
+        heartbeatIncoming: 4000,    // client send heartbeats (default: 10,000ms)
+        heartbeatOutgoing: 4000     // client receive heartbeats (default: 10,000ms)
+
     });
 
-    // sock.onopen = function(event) {
-    //     console.log("websocket connection open");
-    // };
-
-    // sock.onmessage = function(event) {
-    //     console.log(`websocket message: ${event.data}`);
-    // };
-    
-    sock.onclose = function(event) {
-        console.log(event);
-        console.log("websocket connection close");
-        setConnected(false);
-
-        if (event.wasClean) {
-            console.log(`[close] 커넥션이 정상 종료되었습니다.(code=${event.code} reason=${event.reason})`);
-        } else {
-            console.log(`[close] 커넥션이 비정상 종료되었습니다.(code=${event.code} reason=${event.reason})`);
-            setTimeout(function() {
-                connect();
-            }, 3000);
-        }
+    stompClient.onConnect = function (frame) {
+        setConnected(true);
+        console.log('Connected: ' + frame);
+        stompClient.subscribe('/topic/chat', function (message) {
+            showChat(JSON.parse(message.body));
+        });
+        stompClient.subscribe('/topic/notice', function (message) {
+            showNotice(JSON.parse(message.body));
+        });
+        subscription = stompClient.subscribe('/topic/system', function (message) {
+            showSystem(JSON.parse(message.body));
+        });
     };
+    
+    stompClient.onStompError = function (frame) {
+        // Will be invoked in case of error encountered at Broker
+        // Bad login/passcode typically will cause an error
+        // Complaint brokers will set `message` header with a brief message. Body may contain details.
+        // Compliant brokers will terminate the connection after any error
+        console.log('Broker reported error: ' + frame.headers['message']);
+        console.log('Additional details: ' + frame.body);
+    };
+    
+    stompClient.activate();
 
-    // sock.onerror = function(event) {
-    //     console.log("websocket connection error");
-    // };
 }
 
 function disconnect() {
     if (stompClient !== null) {
-        stompClient.disconnect();
+        // stomp 5버전 이상
+        stompClient.deactivate();
     }
     setConnected(false);
     console.log("Disconnected");
@@ -78,7 +77,9 @@ function sendChat() {
 		data.message = $("#msg").val();
 		data.date = new Date().toLocaleString();
 		var temp = JSON.stringify(data);
-        stompClient.send("/app/chat/message", {}, temp);
+
+        // stomp 5버전 이상
+        stompClient.publish({destination:"/app/chat/message", body: temp});
 	}
     $("#msg").val("");
 }
@@ -92,7 +93,9 @@ function sendNotice() {
 		data.message = $("#msg").val();
 		data.date = new Date().toLocaleString();
 		var temp = JSON.stringify(data);
-        stompClient.send("/app/chat/notice", {}, temp);
+
+        // stomp 5버전 이상
+        stompClient.publish({destination:"/app/chat/notice", body: temp});
 	}
     $("#msg").val("");
 }
