@@ -17,6 +17,7 @@ function setConnected(connected) {
 // stomp 5버전 이상
 function connect() {
 
+    // Create an instance
     stompClient = new StompJs.Client({
         brokerURL: 'ws://localhost:9901/websocket',
         connectHeaders: {
@@ -31,6 +32,9 @@ function connect() {
         heartbeatOutgoing: 4000     // client receive heartbeats (default: 10,000ms)
 
     });
+
+    // Attemp to connect
+    stompClient.activate();
 
     stompClient.onConnect = function (frame) {
         setConnected(true);
@@ -55,8 +59,6 @@ function connect() {
         console.log('Additional details: ' + frame.body);
     };
     
-    stompClient.activate();
-
 }
 
 function disconnect() {
