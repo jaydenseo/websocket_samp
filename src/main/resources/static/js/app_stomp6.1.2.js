@@ -17,15 +17,15 @@ function setConnected(connected) {
 // stomp 5버전 이상
 function connect() {
 
-    var sock = new SockJS("/websocket");
-
     // Create an instance
     stompClient = new StompJs.Client({
-        brokerURL: 'ws://localhost:9901/websocket',
+        // The URL for the STOMP broker to connect to.
+        // brokerURL: 'ws://localhost:9901/websocket',  //webSocketFactory로 대체
 
-        // webSocketFactory: function () {
-        //     return sock;
-        // },
+        // Typical usage with SockJS
+        webSocketFactory: function () {
+            return new SockJS("/websocket");
+        },
         // Connection headers, important keys - `login`, `passcode`, `host`.
         connectHeaders: {
             userId: $('#mid').val(), 
@@ -35,7 +35,7 @@ function connect() {
         debug: function (str) {
             console.log(str);
         },
-        reconnectDelay: 500,       // automatically reconnect with delay in milliseconds, set to 0 to disable. (default: 5,000ms)
+        reconnectDelay: 5000,       // automatically reconnect with delay in milliseconds, set to 0 to disable. (default: 5,000ms)
         heartbeatIncoming: 10000,    // Incoming heartbeat interval in milliseconds. Set to 0 to disable. client send heartbeats (default: 10,000ms)
         heartbeatOutgoing: 10000,    // Outgoing heartbeat interval in milliseconds. Set to 0 to disable. client receive heartbeats (default: 10,000ms)
         connectionTimeout: 5000      // Will retry if Stomp connection is not established in specified milliseconds. Default 0, which implies wait for ever.

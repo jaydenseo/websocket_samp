@@ -1,5 +1,6 @@
 package com.example.ccfe2.config;
 
+import java.net.InetAddress;
 import java.util.Map;
 import java.util.Objects;
 
@@ -24,7 +25,6 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.server.HandshakeInterceptor;
-import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -65,6 +65,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     HttpServletRequest servletRequest = servletServerRequest.getServletRequest();
 
                     attributes.put("remoteAddr", servletRequest.getRemoteAddr());
+                    attributes.put("hostAddr", InetAddress.getLocalHost().getHostAddress());
                 }
                 return true;
             }
@@ -81,6 +82,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
                 StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
                 String sessionId = accessor.getSessionId();
+                String hostAddr = Objects.toString(accessor.getSessionAttributes().get("hostAddr"), "");
                 String remoteAddr = Objects.toString(accessor.getSessionAttributes().get("remoteAddr"), "");
 
                 if(StompCommand.CONNECT.equals(accessor.getCommand())){
@@ -93,28 +95,28 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     map.put("hostIp", hostIp);
                     accessor.setSessionAttributes(map);
 
-                    log.info("[ClientInboundChannel] [CONNECT] [{} | {} | {} | {}]" + " >>> " + accessor.getSessionAttributes().toString(), sessionId, userId, hostIp, remoteAddr);
+                    log.info("[ClientInboundChannel] [CONNECT] [{} | {} | {} | {}]" + " >>> " + accessor.getSessionAttributes().toString(), sessionId, userId, hostAddr, remoteAddr);
                 }
                 else if(StompCommand.SUBSCRIBE.equals(accessor.getCommand())){
 
                     String userId = accessor.getSessionAttributes().get("userId").toString();
                     String hostIp = accessor.getSessionAttributes().get("hostIp").toString();
 
-                    log.info("[ClientInboundChannel] [SUBSCRIBE] [{} | {} | {} | {}]" + " >>> " + accessor.getDestination(), sessionId, userId, hostIp, remoteAddr);
+                    log.info("[ClientInboundChannel] [SUBSCRIBE] [{} | {} | {} | {}]" + " >>> " + accessor.getDestination(), sessionId, userId, hostAddr, remoteAddr);
                 }
                 else if(StompCommand.SEND.equals(accessor.getCommand())){
 
                     String userId = accessor.getSessionAttributes().get("userId").toString();
                     String hostIp = accessor.getSessionAttributes().get("hostIp").toString();
                     String messagePayload = new String((byte[])message.getPayload());
-                    log.info("[ClientInboundChannel] [SEND] [{} | {} | {} | {}]" + " >>> " + messagePayload, sessionId, userId, hostIp, remoteAddr);
+                    log.info("[ClientInboundChannel] [SEND] [{} | {} | {} | {}]" + " >>> " + messagePayload, sessionId, userId, hostAddr, remoteAddr);
                 }
                 else if(StompCommand.DISCONNECT.equals(accessor.getCommand())){
 
                     String userId = accessor.getSessionAttributes().get("userId").toString();
                     String hostIp = accessor.getSessionAttributes().get("hostIp").toString();
                     String messagePayload = new String((byte[])message.getPayload());
-                    log.info("[ClientInboundChannel] [DISCONNECT] [{} | {} | {} | {}]" + " >>> " + accessor.getSessionAttributes().toString(), sessionId, userId, hostIp, remoteAddr);
+                    log.info("[ClientInboundChannel] [DISCONNECT] [{} | {} | {} | {}]" + " >>> " + accessor.getSessionAttributes().toString(), sessionId, userId, hostAddr, remoteAddr);
                 }
                 return message;                
             }
