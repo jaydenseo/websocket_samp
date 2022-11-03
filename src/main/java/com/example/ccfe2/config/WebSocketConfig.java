@@ -45,7 +45,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         // 웹소켓 연결을 하는 경우, endpoint가 되는 url (ws://localhost:9091/websocket)
         registry.addEndpoint("/websocket")
                 .setAllowedOriginPatterns("*")
-                .setHandshakeHandler(null)
                 .addInterceptors(handshakeInterceptor());
 
         // SockJs로 웹소켓 연결을 하는 경우, endpoint가 되는 url (http://localhost:9091/websocket)
