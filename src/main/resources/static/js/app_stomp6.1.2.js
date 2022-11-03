@@ -17,20 +17,28 @@ function setConnected(connected) {
 // stomp 5버전 이상
 function connect() {
 
+    var sock = new SockJS("/websocket");
+
     // Create an instance
     stompClient = new StompJs.Client({
         brokerURL: 'ws://localhost:9901/websocket',
+
+        // webSocketFactory: function () {
+        //     return sock;
+        // },
+        // Connection headers, important keys - `login`, `passcode`, `host`.
         connectHeaders: {
             userId: $('#mid').val(), 
             hostIp: window.location.host
         },
+        // incoming and outgoing frames are logged
         debug: function (str) {
-            console.log(str);       // headers of the incoming and outgoing frames are logged
+            console.log(str);
         },
-        reconnectDelay: 5000,       // automatic reconnect (default: 5,000ms)
-        heartbeatIncoming: 4000,    // client send heartbeats (default: 10,000ms)
-        heartbeatOutgoing: 4000     // client receive heartbeats (default: 10,000ms)
-
+        reconnectDelay: 500,       // automatically reconnect with delay in milliseconds, set to 0 to disable. (default: 5,000ms)
+        heartbeatIncoming: 10000,    // Incoming heartbeat interval in milliseconds. Set to 0 to disable. client send heartbeats (default: 10,000ms)
+        heartbeatOutgoing: 10000,    // Outgoing heartbeat interval in milliseconds. Set to 0 to disable. client receive heartbeats (default: 10,000ms)
+        connectionTimeout: 5000      // Will retry if Stomp connection is not established in specified milliseconds. Default 0, which implies wait for ever.
     });
 
     // Attemp to connect
@@ -38,7 +46,7 @@ function connect() {
 
     stompClient.onConnect = function (frame) {
         setConnected(true);
-        console.log('Connected: ' + frame);
+        console.log('onConnect: ' + frame);
         stompClient.subscribe('/topic/chat', function (message) {
             showChat(JSON.parse(message.body));
         });
@@ -49,7 +57,7 @@ function connect() {
             showSystem(JSON.parse(message.body));
         });
     };
-    
+
     stompClient.onStompError = function (frame) {
         // Will be invoked in case of error encountered at Broker
         // Bad login/passcode typically will cause an error
